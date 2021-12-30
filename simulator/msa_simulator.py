@@ -22,7 +22,7 @@ Functions:
 """
 
 
-class MSASimulator:
+class MSASimulatorParallel:
 
     def __init__(self):
         agents = None

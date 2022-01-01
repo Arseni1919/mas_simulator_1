@@ -15,14 +15,14 @@ def main():
 
             # PLOT + RENDER
             env.render()
-            print(f'\r[INFO] problem: {problem}/{PROBLEMS}, step: {step}/{MAX_STEPS}', end='')
+            print(f'\r~[INFO] problem: {problem}/{PROBLEMS}, step: {step}/{MAX_STEPS}', end='')
 
 
 if __name__ == '__main__':
     PROBLEMS = 10
     MAX_STEPS = 20
     N_AGENTS = 10
-    env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=False)
+    env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True)
     main()
 
 

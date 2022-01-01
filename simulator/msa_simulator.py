@@ -24,13 +24,13 @@ Functions:
 
 class MSASimulatorParallel:
 
-    def __init__(self):
-        agents = None
-        num_agents = None
-        possible_agents = None
-        max_num_agents = None
-        observation_spaces = None
-        action_spaces = None
+    def __init__(self, num_agents):
+        self.agents = [Agent(i) for i in range(num_agents)]
+        self.num_agents = num_agents
+        self.possible_agents = None
+        self.max_num_agents = None
+        self.observation_spaces = None
+        self.action_spaces = None
 
     def seed(self):
         pass
@@ -42,7 +42,8 @@ class MSASimulatorParallel:
         pass
 
     def step(self, actions):
-        pass
+        observations, rewards, dones, infos = {}, {}, {}, {}
+        return observations, rewards, dones, infos
 
     def reset(self):
         pass
@@ -54,25 +55,9 @@ class MSASimulatorParallel:
         pass
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class Agent:
+    def __init__(self, agent_id):
+        self.id = agent_id
+        self.name = f'agent_{agent_id}'
+        self.actions = [1, 2, 3, 4]
+        self.x, self.y = -1, -1

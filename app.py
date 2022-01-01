@@ -1,17 +1,21 @@
+import random
+
 from GLOBALS import *
+from simulator.msa_simulator import MSASimulatorParallel
 
 
 def main():
     print('Hellow World!')
+    observations = env.reset()
+    for step in range(MAX_CYCLES):
+        # actions_dict = {agent: policy(observations[agent], agent) for agent in parallel_env.agents}
+        actions_dict = {agent: random.choice(agent.actions) for agent in env.agents}
+        observations, rewards, dones, infos = env.step(actions_dict)
 
 
 if __name__ == '__main__':
-    # parallel_env = pistonball_v4.parallel_env()
-    # observations = parallel_env.reset()
-    # max_cycles = 500
-    # for step in range(max_cycles):
-    #     actions = {agent: policy(observations[agent], agent) for agent in parallel_env.agents}
-    #     observations, rewards, dones, infos = parallel_env.step(actions)
+    env = MSASimulatorParallel(num_agents=10)
+    MAX_CYCLES = 500
     main()
 
 

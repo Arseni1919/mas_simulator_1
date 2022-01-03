@@ -2,6 +2,11 @@
 
 Here we investigate a new DCOP_MST model that incorporates elements ML.
 
+## Algorithms
+
+- Surveillance and Search & Detect teams from Harel's thesis
+- Algorithms from "DCOPs Meet the Real World" paper
+
 ## Credits
 
 - [PettingZoo](https://www.pettingzoo.ml/#)

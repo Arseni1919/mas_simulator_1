@@ -49,8 +49,8 @@ class MSASimulatorParallel:
         self.rewards_sum_list = None
         if self.to_render:
 
-            self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
-            # self.fig, (self.ax, self.ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+            # self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
+            self.fig, (self.ax, self.ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
             # self.fig, (self.ax, self.ax2, self.ax3) = plt.subplots(nrows=1, ncols=3, figsize=(9, 3))
 
     def seed(self):
@@ -146,7 +146,7 @@ class MSASimulatorParallel:
     def random_demo(self, render=True, episodes=1):
         pass
 
-    def render(self):
+    def render(self, er_hat=None):
         if self.to_render:
             # self.fig.cla()
 
@@ -181,13 +181,23 @@ class MSASimulatorParallel:
                 circle_mr = plt.Circle((robot.x, robot.y), robot.mr, color='tab:purple', alpha=0.15)
                 self.ax.add_patch(circle_mr)
 
-            # if self.ax2:
-            #     self.ax2.clear()
-            #     self.ax2.plot(self.rewards_sum)
+            if er_hat:
+                self.ax2.clear()
+                self.ax2.set_title('er_hat')
+                self.ax2.scatter(
+                    [pos_node.x for pos_node in er_hat],
+                    [pos_node.y for pos_node in er_hat],
+                    alpha=[pos_node.req for pos_node in er_hat],
+                    color='darkred', marker="o", s=5
+                )
 
             plt.pause(0.05)
 
-
+    def get_field(self):
+        field = []
+        for pos in self.field_list:
+            field.append(Position(pos.id, pos.x, pos.y, req=1))
+        return field
 class Agent:
     def __init__(self, agent_id, x=-1, y=-1, sr=5, mr=2):
         self.id = agent_id

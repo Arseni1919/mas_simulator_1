@@ -1,6 +1,6 @@
 from GLOBALS import *
 
 
-class Alg_DSA:
+class AlgDSA:
     def __init__(self):
         pass

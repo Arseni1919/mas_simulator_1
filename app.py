@@ -1,10 +1,9 @@
 from GLOBALS import *
 from simulator.msa_simulator import MSASimulatorParallel
-from algorithms.alg_dsa import Alg_DSA
+from algorithms.alg_dsa import AlgDSA
 
 
 def main():
-    print('Hellow World!')
     for problem in range(PROBLEMS):
 
         for i_alg, algorithm in enumerate(algorithms_list):
@@ -28,7 +27,7 @@ if __name__ == '__main__':
     PROBLEMS = 10
     MAX_STEPS = 3
     N_AGENTS = 10
-    algorithms_list = [Alg_DSA()]
+    algorithms_list = [AlgDSA()]
     env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True)
     main()
 

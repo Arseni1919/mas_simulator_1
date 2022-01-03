@@ -1,10 +1,4 @@
-# Python3 program to demonstrate
-# the use of sample() function .
-
-# import random
-from random import sample
-
-# Prints list of random items of given length
-list1 = [1, 2, 3, 4, 5]
-
-print(sample(list1, 3))
+from scipy.spatial.distance import cdist
+import math
+Y = math.sqrt( (1 - 4)**2 + (1 - 1)**2 )
+print(Y)

@@ -1,4 +1,7 @@
+import math
 import random
+
+import numpy as np
 
 from GLOBALS import *
 
@@ -26,7 +29,7 @@ Functions:
 
 class MSASimulatorParallel:
 
-    def __init__(self, num_agents, to_render=True):
+    def __init__(self, num_agents, to_render=True, num_points_of_interest=10):
         self.agents = None
         self.num_agents = num_agents
         self.possible_agents = self.agents
@@ -35,12 +38,19 @@ class MSASimulatorParallel:
         self.action_spaces = None
 
         self.field = None
+        self.num_points_of_interest = num_points_of_interest
         self.width = 50
 
-        # for rendering
+        # RENDER
         self.to_render = to_render
-        self.fig, self.ax = None, None
         self.agent_size = self.width / 50
+        if self.to_render:
+
+            # self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
+
+            self.fig, self.ax_list = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+            self.ax = self.ax_list[0]
+            self.ax2 = self.ax_list[1]
 
     def seed(self):
         pass
@@ -70,9 +80,18 @@ class MSASimulatorParallel:
         positions_for_agents = random.sample(self.field, self.num_agents)
         self.agents = [Agent(i, pos.x, pos.y) for i, pos in enumerate(positions_for_agents)]
 
-        # RENDER
-        if self.to_render:
-            self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
+        # CREATE POINTS OF INTEREST
+        points_of_interest = random.sample(self.field, self.num_points_of_interest)
+        for target in points_of_interest:
+            for pos in self.field:
+                dist = math.sqrt((target.x - pos.x) ** 2 + (target.y - pos.y) ** 2)
+                if dist <= 1.0:
+                    new_req = 1.0
+                elif 1.0 < dist <= 10.0:
+                    new_req = min(1.0, ((1 / dist) + pos.req))
+                else:
+                    new_req = pos.req
+                pos.req = new_req
 
         observations = {}
         return observations
@@ -83,7 +102,7 @@ class MSASimulatorParallel:
     def render(self):
         if self.to_render:
             # self.fig.cla()
-            plt.cla()
+
             self.ax.clear()
             padding = 4
             self.ax.set_xlim([0 - padding, self.width + padding])
@@ -99,7 +118,8 @@ class MSASimulatorParallel:
             self.ax.scatter(
                 [pos_node.x for pos_node in self.field],
                 [pos_node.y for pos_node in self.field],
-                color='g', alpha=0.3, marker="s", s=2
+                alpha=[pos_node.req for pos_node in self.field],
+                color='g', marker="s", s=2
             )
 
             # POSITION ANNOTATIONS
@@ -155,10 +175,8 @@ class Agent:
 
 
 class Position:
-    def __init__(self, pos_id, x, y):
+    def __init__(self, pos_id, x, y, req=0):
         self.id = pos_id
         self.name = f'pos_{pos_id}'
         self.x, self.y = x, y
-
-
-
+        self.req = req

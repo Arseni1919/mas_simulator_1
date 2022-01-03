@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 from GLOBALS import *
-
+from functions import distance
 """
 Full API:
 Attributes: 
@@ -31,60 +31,89 @@ class MSASimulatorParallel:
 
     def __init__(self, num_agents, to_render=True, num_points_of_interest=10):
         self.agents = None
+        self.agents_list = None
         self.num_agents = num_agents
-        self.possible_agents = self.agents
+        self.possible_agents = self.agents_list
         self.max_num_agents = num_agents
         self.observation_spaces = None
         self.action_spaces = None
 
         self.field = None
+        self.field_list = None
         self.num_points_of_interest = num_points_of_interest
         self.width = 50
 
         # RENDER
         self.to_render = to_render
         self.agent_size = self.width / 50
+        self.rewards_sum_list = None
         if self.to_render:
 
-            # self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
-
-            self.fig, self.ax_list = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
-            self.ax = self.ax_list[0]
-            self.ax2 = self.ax_list[1]
+            self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
+            # self.fig, (self.ax, self.ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
+            # self.fig, (self.ax, self.ax2, self.ax3) = plt.subplots(nrows=1, ncols=3, figsize=(9, 3))
 
     def seed(self):
-        pass
+        SEED = 123
+        # torch.manual_seed(SEED)
+        np.random.seed(SEED)
+        random.seed(SEED)
+        # env.seed(SEED)
 
     def observation_space(self, agent):
-        pass
+        return
 
     def action_space(self, agent):
-        pass
+        return self.agents[agent].actions
 
-    def step(self, actions):
-        observations, rewards, dones, infos = {}, {}, {}, {}
+    def step(self, actions: dict):
+        for agent_name, action in actions.items():
+            agent = self.agents[agent_name]
+            new_pos_x, new_pos_y = agent.x,  agent.y
+            if action == 1:  # UP
+                new_pos_y = agent.y + 1
+            if action == 2:  # DOWN
+                new_pos_y = agent.y - 1
+            if action == 3:  # LEFT
+                new_pos_x = agent.x - 1
+            if action == 4:  # RIGHT
+                new_pos_x = agent.x + 1
+
+            new_pos_x = min(self.width - 1, max(0, new_pos_x))
+            new_pos_y = min(self.width - 1, max(0, new_pos_y))
+
+            agent.x = new_pos_x
+            agent.y = new_pos_y
+
+        observations = self._get_observations()
+        rewards = self._get_rewards(observations)
+        self.rewards_sum_list.append(sum(rewards.values()))
+        dones, infos = {}, {}
         return observations, rewards, dones, infos
 
     def reset(self):
         # CLEAR
-        self.field = []
-        self.agents = []
+        self.field_list, self.agents_list = [], []
+        self.field, self.agents = {}, {}
+        self.rewards_sum_list = []
 
         # CREATE FIELD
         for i_x in range(self.width):
             for i_y in range(self.width):
                 pos = Position(pos_id=f'{i_x}{i_y}', x=i_x, y=i_y)
-                self.field.append(pos)
+                self.field_list.append(pos)
+        self.field = {pos.name: pos for pos in self.field_list}
 
         # CREATE AGENTS
-        positions_for_agents = random.sample(self.field, self.num_agents)
-        self.agents = [Agent(i, pos.x, pos.y) for i, pos in enumerate(positions_for_agents)]
+        positions_for_agents = random.sample(self.field_list, self.num_agents)
+        self.agents_list = [Agent(i, pos.x, pos.y) for i, pos in enumerate(positions_for_agents)]
+        self.agents = {agent.name: agent for agent in self.agents_list}
 
         # CREATE POINTS OF INTEREST
-        points_of_interest = random.sample(self.field, self.num_points_of_interest)
+        points_of_interest = random.sample(self.field_list, self.num_points_of_interest)
         for target in points_of_interest:
-            for pos in self.field:
-                dist = math.sqrt((target.x - pos.x) ** 2 + (target.y - pos.y) ** 2)
+            for pos in self.field_list:
+                dist = distance(target, pos)
                 if dist <= 1.0:
                     new_req = 1.0
                 elif 1.0 < dist <= 10.0:
@@ -93,8 +122,26 @@ class MSASimulatorParallel:
                     new_req = pos.req
                 pos.req = new_req
 
+        # BUILD FIRST OBSERVATIONS
+        return self._get_observations()
+
+    def _get_observations(self):
         observations = {}
+        for agent in self.agents_list:
+            observations[agent.name] = []
+            for pos in self.field_list:
+                if distance(agent, pos) <= agent.mr:
+                    observations[agent.name].append((pos.x, pos.y, pos.req))
         return observations
+
+    @staticmethod
+    def _get_rewards(observations):
+        rewards = {}
+        for agent_name, positions in observations.items():
+            rewards[agent_name] = 0
+            for pos in positions:
+                rewards[agent_name] += pos[2]
+        return rewards
 
     def random_demo(self, render=True, episodes=1):
         pass
@@ -110,32 +157,17 @@ class MSASimulatorParallel:
 
             # titles
             self.ax.set_title('MAS Simulation')
-            # ax.set_title( f'Problem:({problem + 1}/{B_NUMBER_OF_PROBLEMS})   Iteration: ({big_iteration + 1}/{
-            # B_ITERATIONS_IN_BIG_LOOPS})' f'\n{alg_name} ({alg_num + 1}/{len(ALGORITHMS_TO_CHECK)}) ' )
-            # ax.set_xlabel(f'\nTime of the run: {time.strftime("%H:%M:%S", time.gmtime(time.time() - start))}')
 
             # POSITIONS
             self.ax.scatter(
-                [pos_node.x for pos_node in self.field],
-                [pos_node.y for pos_node in self.field],
-                alpha=[pos_node.req for pos_node in self.field],
+                [pos_node.x for pos_node in self.field_list],
+                [pos_node.y for pos_node in self.field_list],
+                alpha=[pos_node.req for pos_node in self.field_list],
                 color='g', marker="s", s=2
             )
 
-            # POSITION ANNOTATIONS
-            # for pos_node in self.field:
-            #     self.ax.annotate(pos_node.name, (pos_node.x, pos_node.y), fontsize=5)
-
-            # EDGES: edge lines on the graph
-            # for pos_node in graph:
-            #     x_edges_list, y_edges_list = [], []
-            #     for nearby_node_name, nearby_node in pos_node.nearby_position_nodes.items():
-            #         x_edges_list.extend([pos_node.pos[0], nearby_node.pos[0]])
-            #         y_edges_list.extend([pos_node.pos[1], nearby_node.pos[1]])
-            #     plt.plot(x_edges_list, y_edges_list, color='g', alpha=0.3)
-
             # ROBOTS
-            for robot in self.agents:
+            for robot in self.agents_list:
                 # robot
                 circle1 = plt.Circle((robot.x, robot.y), self.agent_size, color='b', alpha=0.3)
                 self.ax.add_patch(circle1)
@@ -149,29 +181,21 @@ class MSASimulatorParallel:
                 circle_mr = plt.Circle((robot.x, robot.y), robot.mr, color='tab:purple', alpha=0.15)
                 self.ax.add_patch(circle_mr)
 
-            # TARGETS
-            # for target in targets:
-            #     rect = plt.Rectangle(target.pos_node.pos - (B_SIZE_TARGET_NODE / 2, B_SIZE_TARGET_NODE / 2),
-            #                          B_SIZE_TARGET_NODE,
-            #                          B_SIZE_TARGET_NODE, color='r', alpha=0.3)
-            #     ax.add_patch(rect)
-            #     ax.annotate(target.name, target.pos_node.pos, fontsize=5)
-
-            # light up nodes upon the changes
-            # if LIGHT_UP_THE_CHANGES:
-            #     pass
+            # if self.ax2:
+            #     self.ax2.clear()
+            #     self.ax2.plot(self.rewards_sum)
 
             plt.pause(0.05)
 
 
 class Agent:
-    def __init__(self, agent_id, x=-1, y=-1):
+    def __init__(self, agent_id, x=-1, y=-1, sr=5, mr=2):
         self.id = agent_id
         self.x, self.y = x, y
+        self.sr = sr
+        self.mr = mr
         self.name = f'agent_{agent_id}'
         self.actions = [0, 1, 2, 3, 4]
-        self.sr = 2
-        self.mr = 3
 
 
 class Position:

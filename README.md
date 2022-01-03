@@ -6,6 +6,7 @@ Here we investigate a new DCOP_MST model that incorporates elements ML.
 
 - Surveillance and Search & Detect teams from Harel's thesis
 - Algorithms from "DCOPs Meet the Real World" paper
+- Implement different metrics (Neptune)
 
 ## Credits
 

@@ -20,7 +20,7 @@ def main():
 
 if __name__ == '__main__':
     PROBLEMS = 10
-    MAX_STEPS = 20
+    MAX_STEPS = 3
     N_AGENTS = 10
     env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True)
     main()

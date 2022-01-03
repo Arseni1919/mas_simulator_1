@@ -1,3 +1,5 @@
+import random
+
 from GLOBALS import *
 
 """
@@ -25,14 +27,20 @@ Functions:
 class MSASimulatorParallel:
 
     def __init__(self, num_agents, to_render=True):
-        self.agents = [Agent(i) for i in range(num_agents)]
+        self.agents = None
         self.num_agents = num_agents
         self.possible_agents = self.agents
         self.max_num_agents = num_agents
         self.observation_spaces = None
         self.action_spaces = None
+
+        self.field = None
+        self.width = 50
+
+        # for rendering
         self.to_render = to_render
-        self.fig = None
+        self.fig, self.ax = None, None
+        self.agent_size = self.width / 50
 
     def seed(self):
         pass
@@ -48,9 +56,25 @@ class MSASimulatorParallel:
         return observations, rewards, dones, infos
 
     def reset(self):
-        observations = {}
+        # CLEAR
+        self.field = []
+        self.agents = []
+
+        # CREATE FIELD
+        for i_x in range(self.width):
+            for i_y in range(self.width):
+                pos = Position(pos_id=f'{i_x}{i_y}', x=i_x, y=i_y)
+                self.field.append(pos)
+
+        # CREATE AGENTS
+        positions_for_agents = random.sample(self.field, self.num_agents)
+        self.agents = [Agent(i, pos.x, pos.y) for i, pos in enumerate(positions_for_agents)]
+
+        # RENDER
         if self.to_render:
-            self.fig = plt.figure()
+            self.fig, self.ax = plt.subplots(figsize=[6.5, 6.5])
+
+        observations = {}
         return observations
 
     def random_demo(self, render=True, episodes=1):
@@ -58,14 +82,83 @@ class MSASimulatorParallel:
 
     def render(self):
         if self.to_render:
-            plt.clf()
-            plt.plot(np.random.rand(10))
-            plt.pause(0.01)
+            # self.fig.cla()
+            plt.cla()
+            self.ax.clear()
+            padding = 4
+            self.ax.set_xlim([0 - padding, self.width + padding])
+            self.ax.set_ylim([0 - padding, self.width + padding])
+
+            # titles
+            self.ax.set_title('MAS Simulation')
+            # ax.set_title( f'Problem:({problem + 1}/{B_NUMBER_OF_PROBLEMS})   Iteration: ({big_iteration + 1}/{
+            # B_ITERATIONS_IN_BIG_LOOPS})' f'\n{alg_name} ({alg_num + 1}/{len(ALGORITHMS_TO_CHECK)}) ' )
+            # ax.set_xlabel(f'\nTime of the run: {time.strftime("%H:%M:%S", time.gmtime(time.time() - start))}')
+
+            # POSITIONS
+            self.ax.scatter(
+                [pos_node.x for pos_node in self.field],
+                [pos_node.y for pos_node in self.field],
+                color='g', alpha=0.3, marker="s", s=2
+            )
+
+            # POSITION ANNOTATIONS
+            # for pos_node in self.field:
+            #     self.ax.annotate(pos_node.name, (pos_node.x, pos_node.y), fontsize=5)
+
+            # EDGES: edge lines on the graph
+            # for pos_node in graph:
+            #     x_edges_list, y_edges_list = [], []
+            #     for nearby_node_name, nearby_node in pos_node.nearby_position_nodes.items():
+            #         x_edges_list.extend([pos_node.pos[0], nearby_node.pos[0]])
+            #         y_edges_list.extend([pos_node.pos[1], nearby_node.pos[1]])
+            #     plt.plot(x_edges_list, y_edges_list, color='g', alpha=0.3)
+
+            # ROBOTS
+            for robot in self.agents:
+                # robot
+                circle1 = plt.Circle((robot.x, robot.y), self.agent_size, color='b', alpha=0.3)
+                self.ax.add_patch(circle1)
+                self.ax.annotate(robot.name, (robot.x, robot.y), fontsize=5)
+
+                # range of sr
+                circle_sr = plt.Circle((robot.x, robot.y), robot.sr, color='y', alpha=0.15)
+                self.ax.add_patch(circle_sr)
+
+                # range of mr
+                circle_mr = plt.Circle((robot.x, robot.y), robot.mr, color='tab:purple', alpha=0.15)
+                self.ax.add_patch(circle_mr)
+
+            # TARGETS
+            # for target in targets:
+            #     rect = plt.Rectangle(target.pos_node.pos - (B_SIZE_TARGET_NODE / 2, B_SIZE_TARGET_NODE / 2),
+            #                          B_SIZE_TARGET_NODE,
+            #                          B_SIZE_TARGET_NODE, color='r', alpha=0.3)
+            #     ax.add_patch(rect)
+            #     ax.annotate(target.name, target.pos_node.pos, fontsize=5)
+
+            # light up nodes upon the changes
+            # if LIGHT_UP_THE_CHANGES:
+            #     pass
+
+            plt.pause(0.05)
 
 
 class Agent:
-    def __init__(self, agent_id):
+    def __init__(self, agent_id, x=-1, y=-1):
         self.id = agent_id
+        self.x, self.y = x, y
         self.name = f'agent_{agent_id}'
-        self.actions = [1, 2, 3, 4]
-        self.x, self.y = -1, -1
+        self.actions = [0, 1, 2, 3, 4]
+        self.sr = 2
+        self.mr = 3
+
+
+class Position:
+    def __init__(self, pos_id, x, y):
+        self.id = pos_id
+        self.name = f'pos_{pos_id}'
+        self.x, self.y = x, y
+
+
+

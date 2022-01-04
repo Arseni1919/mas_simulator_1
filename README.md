@@ -1,6 +1,6 @@
 # Multi-Agent System Simulator
 
-Here we investigate a new DCOP_MST model that incorporates elements ML.
+We investigate a new DCOP_MST model that incorporates elements of ML in distributed search problems.
 
 ## Algorithms
 

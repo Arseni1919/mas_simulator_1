@@ -14,13 +14,13 @@ def main():
             for step in range(MAX_STEPS):
                 # actions_dict = {agent: policy(observations[agent], agent) for agent in parallel_env.agents}
                 # actions_dict = {agent.name: random.choice(agent.actions) for agent in env.agents_list}
-                actions_dict = algorithm.iteration_calc(observations)
+                actions_dict = algorithm.iteration_calc(observations, env)
                 new_observations, rewards, dones, infos = env.step(actions_dict)
 
                 observations = new_observations
 
                 # PLOT + RENDER
-                env.render(er_hat=algorithm.er_hat)
+                env.render(er_hat=algorithm.search_map)
                 print(f'\r~[INFO] problem: {problem + 1}/{PROBLEMS}, alg:{i_alg + 1}/{len(algorithms_list)}, '
                       f'step: {step + 1}/{MAX_STEPS}', end='')
 

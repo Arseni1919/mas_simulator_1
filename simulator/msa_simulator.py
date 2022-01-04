@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 from GLOBALS import *
-from functions import distance
+from functions import distance_nodes
 """
 Full API:
 Attributes: 
@@ -66,22 +66,26 @@ class MSASimulatorParallel:
     def action_space(self, agent):
         return self.agents[agent].actions
 
+    def get_next_pos(self, agent, action):
+        new_pos_x, new_pos_y = agent.x, agent.y
+        if action == 1:  # UP
+            new_pos_y = agent.y + 1
+        if action == 2:  # DOWN
+            new_pos_y = agent.y - 1
+        if action == 3:  # LEFT
+            new_pos_x = agent.x - 1
+        if action == 4:  # RIGHT
+            new_pos_x = agent.x + 1
+
+        new_pos_x = min(self.width - 1, max(0, new_pos_x))
+        new_pos_y = min(self.width - 1, max(0, new_pos_y))
+
+        return new_pos_x, new_pos_y
+
     def step(self, actions: dict):
         for agent_name, action in actions.items():
             agent = self.agents[agent_name]
-            new_pos_x, new_pos_y = agent.x,  agent.y
-            if action == 1:  # UP
-                new_pos_y = agent.y + 1
-            if action == 2:  # DOWN
-                new_pos_y = agent.y - 1
-            if action == 3:  # LEFT
-                new_pos_x = agent.x - 1
-            if action == 4:  # RIGHT
-                new_pos_x = agent.x + 1
-
-            new_pos_x = min(self.width - 1, max(0, new_pos_x))
-            new_pos_y = min(self.width - 1, max(0, new_pos_y))
-
+            new_pos_x, new_pos_y = self.get_next_pos(agent, action)
             agent.x = new_pos_x
             agent.y = new_pos_y
 
@@ -113,7 +117,7 @@ class MSASimulatorParallel:
         points_of_interest = random.sample(self.field_list, self.num_points_of_interest)
         for target in points_of_interest:
             for pos in self.field_list:
-                dist = distance(target, pos)
+                dist = distance_nodes(target, pos)
                 if dist <= 1.0:
                     new_req = 1.0
                 elif 1.0 < dist <= 10.0:
@@ -130,7 +134,7 @@ class MSASimulatorParallel:
         for agent in self.agents_list:
             observations[agent.name] = []
             for pos in self.field_list:
-                if distance(agent, pos) <= agent.mr:
+                if distance_nodes(agent, pos) <= agent.mr:
                     observations[agent.name].append((pos.x, pos.y, pos.req))
         return observations
 
@@ -199,11 +203,12 @@ class MSASimulatorParallel:
             field.append(Position(pos.id, pos.x, pos.y, req=1))
         return field
 class Agent:
-    def __init__(self, agent_id, x=-1, y=-1, sr=5, mr=2):
+    def __init__(self, agent_id, x=-1, y=-1, sr=5, mr=2, cred=0.5):
         self.id = agent_id
         self.x, self.y = x, y
         self.sr = sr
         self.mr = mr
+        self.cred = cred
         self.name = f'agent_{agent_id}'
         self.actions = [0, 1, 2, 3, 4]
 

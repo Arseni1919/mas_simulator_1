@@ -202,6 +202,8 @@ class MSASimulatorParallel:
         for pos in self.field_list:
             field.append(Position(pos.id, pos.x, pos.y, req=1))
         return field
+
+
 class Agent:
     def __init__(self, agent_id, x=-1, y=-1, sr=5, mr=2, cred=0.5):
         self.id = agent_id

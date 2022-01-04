@@ -39,12 +39,14 @@ class AlgDSA:
             next_action = self.get_best_next_action(agent, env)
             if random.random() < 0.7:
                 actions_dict[agent.name] = next_action
+            else:
+                actions_dict[agent.name] = random.choice(agent.actions)
 
         # update unvisited pos
-        z = 0.01
-        for pos in self.search_map:
-            if (pos.x, pos.y) not in visited_pos_dict:
-                pos.req = min(pos.req + z, prev_er_hat_dict[(pos.x, pos.y)].req)
+        # z = 0.01
+        # for pos in self.search_map:
+        #     if (pos.x, pos.y) not in visited_pos_dict:
+        #         pos.req = min(pos.req + z, prev_er_hat_dict[(pos.x, pos.y)].req)
         # actions_dict = {agent.name: random.choice(agent.actions) for agent in self.agents_list}
         return actions_dict
 
@@ -54,6 +56,7 @@ class AlgDSA:
         for action in agent.actions:
             next_x, next_y = env.get_next_pos(agent, action)
             xy_sum = 0
+            # for pos in self.er_hat:
             for pos in self.search_map:
                 if distance_points(next_x, next_y, pos.x, pos.y) <= agent.sr:
                     xy_sum += pos.req

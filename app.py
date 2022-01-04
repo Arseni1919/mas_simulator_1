@@ -1,3 +1,5 @@
+import time
+
 from GLOBALS import *
 from simulator.msa_simulator import MSASimulatorParallel
 from algorithms.alg_dsa import AlgDSA
@@ -20,12 +22,14 @@ def main():
                 observations = new_observations
 
                 # PLOT + RENDER
+                # env.render(er_hat=algorithm.er_hat)
                 env.render(er_hat=algorithm.search_map)
                 print(f'\r~[INFO] problem: {problem + 1}/{PROBLEMS}, alg:{i_alg + 1}/{len(algorithms_list)}, '
                       f'step: {step + 1}/{MAX_STEPS}', end='')
 
 
 if __name__ == '__main__':
+    # time.sleep(5)
     PROBLEMS = 10
     MAX_STEPS = 300
     N_AGENTS = 10

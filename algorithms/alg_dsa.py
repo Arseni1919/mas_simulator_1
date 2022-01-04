@@ -2,6 +2,7 @@ from GLOBALS import *
 from simulator.msa_simulator import Agent, Position
 from functions import distance_points
 
+
 class AlgDSA:
     def __init__(self):
         self.agents_list = None

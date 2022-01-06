@@ -22,8 +22,8 @@ def main():
                 observations = new_observations
 
                 # PLOT + RENDER
-                # env.render(er_hat=algorithm.er_hat)
-                env.render(er_hat=algorithm.search_map)
+                env.render(er_hat=algorithm.er_hat)
+                # env.render(er_hat=algorithm.search_map)
                 print(f'\r~[INFO] problem: {problem + 1}/{PROBLEMS}, alg:{i_alg + 1}/{len(algorithms_list)}, '
                       f'step: {step + 1}/{MAX_STEPS}', end='')
 

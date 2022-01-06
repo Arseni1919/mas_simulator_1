@@ -68,14 +68,34 @@ class MSASimulatorParallel:
 
     def get_next_pos(self, agent, action):
         new_pos_x, new_pos_y = agent.x, agent.y
+        # if action == 1:  # UP
+        #     new_pos_y = agent.y + 1
+        # if action == 2:  # DOWN
+        #     new_pos_y = agent.y - 1
+        # if action == 3:  # LEFT
+        #     new_pos_x = agent.x - 1
+        # if action == 4:  # RIGHT
+        #     new_pos_x = agent.x + 1
         if action == 1:  # UP
             new_pos_y = agent.y + 1
-        if action == 2:  # DOWN
-            new_pos_y = agent.y - 1
-        if action == 3:  # LEFT
-            new_pos_x = agent.x - 1
+        if action == 2:  # RIGHT
+            new_pos_x = agent.x + 1
+            new_pos_y = agent.y + 1
+        if action == 3:  # RIGHT
+            new_pos_x = agent.x + 1
         if action == 4:  # RIGHT
             new_pos_x = agent.x + 1
+            new_pos_y = agent.y - 1
+        if action == 5:  # DOWN
+            new_pos_y = agent.y - 1
+        if action == 6:  # RIGHT
+            new_pos_y = agent.y - 1
+            new_pos_x = agent.x - 1
+        if action == 7:  # LEFT
+            new_pos_x = agent.x - 1
+        if action == 8:  # RIGHT
+            new_pos_x = agent.x - 1
+            new_pos_y = agent.y + 1
 
         new_pos_x = min(self.width - 1, max(0, new_pos_x))
         new_pos_y = min(self.width - 1, max(0, new_pos_y))
@@ -134,7 +154,7 @@ class MSASimulatorParallel:
         for agent in self.agents_list:
             observations[agent.name] = []
             for pos in self.field_list:
-                if distance_nodes(agent, pos) <= agent.mr:
+                if distance_nodes(agent, pos) <= agent.sr:
                     observations[agent.name].append((pos.x, pos.y, pos.req))
         return observations
 
@@ -212,7 +232,8 @@ class Agent:
         self.mr = mr
         self.cred = cred
         self.name = f'agent_{agent_id}'
-        self.actions = [0, 1, 2, 3, 4]
+        # self.actions = [0, 1, 2, 3, 4]
+        self.actions = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 
 class Position:

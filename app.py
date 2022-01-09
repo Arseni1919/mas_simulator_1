@@ -4,6 +4,7 @@ from GLOBALS import *
 from simulator.msa_simulator import MSASimulatorParallel
 from algorithms.alg_dsa import AlgDSA
 from algorithms.alg_rand_1 import AlgRand1
+from plotter import Plotter
 
 
 def main():
@@ -37,6 +38,7 @@ if __name__ == '__main__':
     # algorithms_list = [AlgDSA()]
     algorithms_list = [AlgRand1()]
     env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True)
+    plotter = Plotter(plot_neptune=False, tags=None, name='check')
     main()
 
 

@@ -170,7 +170,7 @@ class MSASimulatorParallel:
     def random_demo(self, render=True, episodes=1):
         pass
 
-    def render(self, er_hat=None):
+    def render(self, er_hat=None, alg_name='MAS Simulation'):
         if self.to_render:
             # self.fig.cla()
 
@@ -180,7 +180,7 @@ class MSASimulatorParallel:
             self.ax.set_ylim([0 - padding, self.width + padding])
 
             # titles
-            self.ax.set_title('MAS Simulation')
+            self.ax.set_title(alg_name)
 
             # POSITIONS
             self.ax.scatter(

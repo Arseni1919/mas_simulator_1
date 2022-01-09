@@ -1,16 +1,19 @@
 from GLOBALS import *
 from simulator.msa_simulator import Agent, Position
 from functions import distance_points
+from algorithms.alg_meta import AlgMeta
 
 
-class AlgDSA:
+class AlgDSA(AlgMeta):
     def __init__(self):
+        super().__init__()
         self.agents_list = None
         self.er_hat = None
         self.er_hat_dict = None
         self.search_map = None
         self.search_map_dict = None
         self.prev_er_hat_dict = None
+        self.name = 'DSA_MST'
 
     def reset(self, agents_list, field_list):
         self.agents_list = agents_list

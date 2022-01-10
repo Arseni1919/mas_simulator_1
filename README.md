@@ -12,8 +12,9 @@ We investigate a new DCOP_MST model that incorporates elements of ML in distribu
 
 ### Implemented:
 
-- [random (version 1)](/algorithms/alg_rand_1.py) - selects next move randomly
-
+- [random (version 1)](/algorithms/alg_rand_1.py) - each agent selects next move randomly
+$ \sigma a $
+$$ \sigma $$
 ## Credits
 
 - [PettingZoo](https://www.pettingzoo.ml/#)

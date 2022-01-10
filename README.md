@@ -16,7 +16,7 @@ We investigate a new DCOP_MST model that incorporates elements of ML in distribu
 $ \sigma a $
 $$ \sigma $$
 
-```math
+```latex
 SE = \frac{\sigma}{\sqrt{n}}
 ```
 

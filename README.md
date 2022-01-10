@@ -15,6 +15,11 @@ We investigate a new DCOP_MST model that incorporates elements of ML in distribu
 - [random (version 1)](/algorithms/alg_rand_1.py) - each agent selects next move randomly
 $ \sigma a $
 $$ \sigma $$
+
+```math
+SE = \frac{\sigma}{\sqrt{n}}
+```
+
 ## Credits
 
 - [PettingZoo](https://www.pettingzoo.ml/#)

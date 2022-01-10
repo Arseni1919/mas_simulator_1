@@ -1,4 +1,38 @@
 from GLOBALS import *
+from functions import distance_points
+
+def get_er_loss(er_real, er_hat):
+    """loss = sum(abs(er - er_hat))"""
+    er_loss = 0
+    er_hat_dict = {(pos.x, pos.y): pos for pos in er_hat}
+    for er_pos in er_real:
+        er_pos_req = er_pos.req
+        er_pos_req_hat = er_hat_dict[(er_pos.x, er_pos.y)].req
+        er_loss += abs(er_pos_req_hat - er_pos_req)
+    return er_loss
+
+
+def get_sum_jc(x, y, agents):
+    creds = 0
+    for agent in agents:
+        if distance_points(x, y, agent.x, agent.y) <= agent.sr:
+            creds += agent.cred
+    return creds
+
+
+def get_objective(er_real, agents):
+    """objective of a new dcop_mst model"""
+    objective = 0
+    for er_pos in er_real:
+        objective += max(0, er_pos.req - get_sum_jc(er_pos.x, er_pos.y, agents))
+    return objective
+
+
+def get_tags(alg_list):
+    tags = ['MAS_simulator']
+    for alg in alg_list:
+        tags.append(alg.name)
+    return tags
 
 
 class Plotter:
@@ -44,6 +78,11 @@ class Plotter:
 
     def update_metrics(self, update_dict: dict):
         pass
+
+    def update_metrics_and_neptune(self, update_dict: dict):
+        """use it if the dict is the same for both methods"""
+        self.update_metrics(update_dict)
+        self.neptune_plot(update_dict)
 
 
 

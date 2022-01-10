@@ -6,7 +6,7 @@ import math
 import copy
 from scipy.spatial.distance import cdist
 import abc
-import neptune
+import neptune.new as neptune
 
 
 

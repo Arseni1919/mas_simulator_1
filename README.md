@@ -13,12 +13,11 @@ We investigate a new DCOP_MST model that incorporates elements of ML in distribu
 ### Implemented:
 
 - [random (version 1)](/algorithms/alg_rand_1.py) - each agent selects next move randomly
-$ \sigma a $
-$$ \sigma $$
 
-```latex
-SE = \frac{\sigma}{\sqrt{n}}
-```
+### Metrics:
+
+- ER Loss
+- DCOP_MST Objective
 
 ## Credits
 

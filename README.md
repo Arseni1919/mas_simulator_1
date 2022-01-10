@@ -12,7 +12,7 @@ We investigate a new DCOP_MST model that incorporates elements of ML in distribu
 
 ### Implemented:
 
-- 
+- [random (version 1)](/algorithms/alg_rand_1.py) - selects next move randomly
 
 ## Credits
 

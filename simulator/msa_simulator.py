@@ -29,7 +29,7 @@ Functions:
 
 class MSASimulatorParallel:
 
-    def __init__(self, num_agents, to_render=True, num_points_of_interest=10):
+    def __init__(self, num_agents, to_render=True, poi=10, width=50):
         self.agents = None
         self.agents_list = None
         self.num_agents = num_agents
@@ -40,8 +40,8 @@ class MSASimulatorParallel:
 
         self.field = None
         self.field_list = None
-        self.num_points_of_interest = num_points_of_interest
-        self.width = 50
+        self.num_points_of_interest = poi
+        self.width = width
 
         # RENDER
         self.to_render = to_render
@@ -187,7 +187,7 @@ class MSASimulatorParallel:
                 [pos_node.x for pos_node in self.field_list],
                 [pos_node.y for pos_node in self.field_list],
                 alpha=[pos_node.req for pos_node in self.field_list],
-                color='g', marker="s", s=2
+                color='g', marker="s", s=5  # s=2
             )
 
             # ROBOTS

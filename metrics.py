@@ -1,6 +1,7 @@
 from GLOBALS import *
 from functions import distance_points
 
+
 def get_er_loss(er_real, er_hat):
     """loss = sum(abs(er - er_hat))"""
     er_loss = 0

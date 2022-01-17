@@ -24,7 +24,7 @@ def main():
                 observations = new_observations
 
                 # RENDER
-                # env.render(er_hat=algorithm.er_hat, alg_name=algorithm.name)
+                env.render(er_hat=algorithm.er_hat, alg_name=algorithm.name)
                 # env.render(er_hat=algorithm.search_map)
 
                 # METRICS
@@ -40,13 +40,16 @@ def main():
 
 if __name__ == '__main__':
     # time.sleep(5)
-    PROBLEMS = 1
+    PROBLEMS = 100
     MAX_STEPS = 300
-    N_AGENTS = 10
+    N_AGENTS = 2
+    num_points_of_interest = 1
+    width = 30
     # algorithms_list = [AlgDSA()]
     algorithms_list = [AlgRand1()]
-    env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True)
-    plotter = Plotter(plot_neptune=True, tags=get_tags(algorithms_list), name='check')
+    env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True, poi=num_points_of_interest, width=width)
+    # plotter = Plotter(plot_neptune=True, tags=get_tags(algorithms_list), name='check')
+    plotter = Plotter(plot_neptune=False, tags=get_tags(algorithms_list), name='check')
     main()
 
 

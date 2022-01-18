@@ -1,21 +1,19 @@
 from GLOBALS import *
-from simulator.msa_simulator import Agent, Position
 from functions import distance_points
 from algorithms.alg_meta import AlgMeta
 
 
 class AlgDSA(AlgMeta):
     def __init__(self):
-        super().__init__()
+        super().__init__(name='DSA_MST')
         self.agents_list = None
         self.er_hat = None
         self.er_hat_dict = None
         self.search_map = None
         self.search_map_dict = None
         self.prev_er_hat_dict = None
-        self.name = 'DSA_MST'
 
-    def reset(self, agents_list, field_list):
+    def reset(self, agents_list, field_list, *args, **kwargs):
         self.agents_list = agents_list
         self.er_hat = field_list
         self.er_hat_dict = {(pos.x, pos.y): pos for pos in self.er_hat}
@@ -23,7 +21,7 @@ class AlgDSA(AlgMeta):
         self.search_map_dict = {(pos.x, pos.y): pos for pos in self.search_map}
         self.prev_er_hat_dict = copy.deepcopy(self.er_hat_dict)
 
-    def iteration_calc(self, observations, env):
+    def iteration_calc(self, observations, env, *args, **kwargs):
         actions_dict = {}
         prev_er_hat_dict = self.prev_er_hat_dict
         visited_pos_dict = {}

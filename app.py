@@ -4,6 +4,7 @@ from GLOBALS import *
 from simulator.msa_simulator import MSASimulatorParallel
 from algorithms.alg_dsa import AlgDSA
 from algorithms.alg_rand_1 import AlgRand1
+from algorithms.alg_simple_cover import AlgSimpleCover
 from metrics import Plotter, get_er_loss, get_objective, get_tags
 
 
@@ -13,7 +14,7 @@ def main():
         for i_alg, algorithm in enumerate(algorithms_list):
 
             observations = env.reset()
-            algorithm.reset(env.agents_list, env.get_field())
+            algorithm.reset(env.agents_list, env.get_field(), targets=env.poi)
 
             for step in range(MAX_STEPS):
                 # actions_dict = {agent: policy(observations[agent], agent) for agent in parallel_env.agents}
@@ -43,34 +44,18 @@ if __name__ == '__main__':
     PROBLEMS = 100
     MAX_STEPS = 300
     N_AGENTS = 2
-    num_points_of_interest = 1
-    width = 30
+    SR = 2
+    MR = 2
+    CRED = 0.5
+    targets = 1
+    target_radius = 2
+    width = 10
     # algorithms_list = [AlgDSA()]
-    algorithms_list = [AlgRand1()]
-    env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True, poi=num_points_of_interest, width=width)
+    # algorithms_list = [AlgRand1()]
+    algorithms_list = [AlgSimpleCover()]
+    env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True, width=width,
+                               poi=targets, target_radius=target_radius,
+                               agent_sr=SR, agent_mr=MR, agent_cred=CRED)
     # plotter = Plotter(plot_neptune=True, tags=get_tags(algorithms_list), name='check')
     plotter = Plotter(plot_neptune=False, tags=get_tags(algorithms_list), name='check')
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,7 +1,6 @@
 from abc import ABC
 
 from GLOBALS import *
-from simulator.msa_simulator import Agent, Position
 from functions import distance_points
 from algorithms.alg_meta import AlgMeta
 

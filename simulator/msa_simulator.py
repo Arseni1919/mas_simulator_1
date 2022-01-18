@@ -29,7 +29,8 @@ Functions:
 
 class MSASimulatorParallel:
 
-    def __init__(self, num_agents, to_render=True, poi=10, width=50):
+    def __init__(self, num_agents, to_render=True, poi=10, width=50, target_radius=10,
+                 agent_sr=5, agent_mr=2, agent_cred=0.5):
         self.agents = None
         self.agents_list = None
         self.num_agents = num_agents
@@ -40,8 +41,13 @@ class MSASimulatorParallel:
 
         self.field = None
         self.field_list = None
-        self.num_points_of_interest = poi
         self.width = width
+        self.poi = None  # POINTS OF INTEREST
+        self.num_of_poi = poi
+        self.poi_radius = target_radius
+        self.agent_sr = agent_sr
+        self.agent_mr = agent_mr
+        self.agent_cred = agent_cred
 
         # RENDER
         self.to_render = to_render
@@ -65,6 +71,53 @@ class MSASimulatorParallel:
 
     def action_space(self, agent):
         return self.agents[agent].actions
+
+    def _get_observations(self):
+        observations = {}
+        for agent in self.agents_list:
+            observations[agent.name] = []
+            for pos in self.field_list:
+                if distance_nodes(agent, pos) <= agent.sr:
+                    observations[agent.name].append((pos.x, pos.y, pos.req))
+        return observations
+
+    def reset(self):
+        # CLEAR
+        self.field_list, self.agents_list = [], []
+        self.field, self.agents = {}, {}
+        self.rewards_sum_list = []
+
+        # CREATE FIELD
+        for i_x in range(self.width):
+            for i_y in range(self.width):
+                pos = Position(pos_id=f'{i_x}{i_y}', x=i_x, y=i_y)
+                self.field_list.append(pos)
+        self.field = {pos.name: pos for pos in self.field_list}
+
+        # CREATE AGENTS
+        positions_for_agents = random.sample(self.field_list, self.num_agents)
+        self.agents_list = [
+            Agent(
+                i, pos.x, pos.y, sr=self.agent_sr, mr=self.agent_mr, cred=self.agent_cred
+            ) for i, pos in enumerate(positions_for_agents)
+        ]
+        self.agents = {agent.name: agent for agent in self.agents_list}
+
+        # CREATE POINTS OF INTEREST
+        self.poi = random.sample(self.field_list, self.num_of_poi)
+        for target in self.poi:
+            for pos in self.field_list:
+                dist = distance_nodes(target, pos)
+                if dist <= 1.0:
+                    new_req = 1.0
+                elif 1.0 < dist <= self.poi_radius:
+                    new_req = min(1.0, ((1 / dist) + pos.req))
+                else:
+                    new_req = pos.req
+                pos.req = new_req
+
+        # BUILD FIRST OBSERVATIONS
+        return self._get_observations()
 
     def get_next_pos(self, agent, action):
         new_pos_x, new_pos_y = agent.x, agent.y
@@ -115,49 +168,6 @@ class MSASimulatorParallel:
         dones, infos = {}, {}
         return observations, rewards, dones, infos
 
-    def reset(self):
-        # CLEAR
-        self.field_list, self.agents_list = [], []
-        self.field, self.agents = {}, {}
-        self.rewards_sum_list = []
-
-        # CREATE FIELD
-        for i_x in range(self.width):
-            for i_y in range(self.width):
-                pos = Position(pos_id=f'{i_x}{i_y}', x=i_x, y=i_y)
-                self.field_list.append(pos)
-        self.field = {pos.name: pos for pos in self.field_list}
-
-        # CREATE AGENTS
-        positions_for_agents = random.sample(self.field_list, self.num_agents)
-        self.agents_list = [Agent(i, pos.x, pos.y) for i, pos in enumerate(positions_for_agents)]
-        self.agents = {agent.name: agent for agent in self.agents_list}
-
-        # CREATE POINTS OF INTEREST
-        points_of_interest = random.sample(self.field_list, self.num_points_of_interest)
-        for target in points_of_interest:
-            for pos in self.field_list:
-                dist = distance_nodes(target, pos)
-                if dist <= 1.0:
-                    new_req = 1.0
-                elif 1.0 < dist <= 10.0:
-                    new_req = min(1.0, ((1 / dist) + pos.req))
-                else:
-                    new_req = pos.req
-                pos.req = new_req
-
-        # BUILD FIRST OBSERVATIONS
-        return self._get_observations()
-
-    def _get_observations(self):
-        observations = {}
-        for agent in self.agents_list:
-            observations[agent.name] = []
-            for pos in self.field_list:
-                if distance_nodes(agent, pos) <= agent.sr:
-                    observations[agent.name].append((pos.x, pos.y, pos.req))
-        return observations
-
     @staticmethod
     def _get_rewards(observations):
         rewards = {}
@@ -179,7 +189,15 @@ class MSASimulatorParallel:
             self.ax.set_xlim([0 - padding, self.width + padding])
             self.ax.set_ylim([0 - padding, self.width + padding])
 
-            # titles
+            # BORDERS OF FIELD
+            sm_pd = 0.5
+            self.ax.plot(
+                [0 - sm_pd, self.width - 1 + sm_pd, self.width - 1 + sm_pd, 0 - sm_pd, 0 - sm_pd],
+                [0 - sm_pd, 0 - sm_pd, self.width - 1 + sm_pd, self.width - 1 + sm_pd, 0 - sm_pd],
+                marker='o', color='brown'
+            )
+
+            # TITLES
             self.ax.set_title(alg_name)
 
             # POSITIONS

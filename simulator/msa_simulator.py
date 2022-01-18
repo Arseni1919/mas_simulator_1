@@ -39,7 +39,7 @@ class MSASimulatorParallel:
         self.observation_spaces = None
         self.action_spaces = None
 
-        self.field = None
+        self.field_dict = None
         self.field_list = None
         self.width = width
         self.poi = None  # POINTS OF INTEREST
@@ -84,7 +84,7 @@ class MSASimulatorParallel:
     def reset(self):
         # CLEAR
         self.field_list, self.agents_list = [], []
-        self.field, self.agents = {}, {}
+        self.field_dict, self.agents = {}, {}
         self.rewards_sum_list = []
 
         # CREATE FIELD
@@ -92,7 +92,7 @@ class MSASimulatorParallel:
             for i_y in range(self.width):
                 pos = Position(pos_id=f'{i_x}{i_y}', x=i_x, y=i_y)
                 self.field_list.append(pos)
-        self.field = {pos.name: pos for pos in self.field_list}
+        self.field_dict = {pos.name: pos for pos in self.field_list}
 
         # CREATE AGENTS
         positions_for_agents = random.sample(self.field_list, self.num_agents)
@@ -235,10 +235,10 @@ class MSASimulatorParallel:
 
             plt.pause(0.05)
 
-    def get_field(self):
+    def get_field(self, req=1):
         field = []
         for pos in self.field_list:
-            field.append(Position(pos.id, pos.x, pos.y, req=1))
+            field.append(Position(pos.id, pos.x, pos.y, req=req))
         return field
 
 
@@ -260,3 +260,5 @@ class Position:
         self.name = f'pos_{pos_id}'
         self.x, self.y = x, y
         self.req = req
+        self.rem_req = req
+        self.cov_req = 0

@@ -14,7 +14,8 @@ def main():
         for i_alg, algorithm in enumerate(algorithms_list):
 
             observations = env.reset()
-            algorithm.reset(env.agents_list, env.get_field(), targets=env.poi)
+            # algorithm.reset(env.agents_list, field_list=env.get_field())
+            algorithm.reset(env.agents_list, field_list=env.field_list, targets=env.poi, target_radius=env.poi_radius)
 
             for step in range(MAX_STEPS):
                 # actions_dict = {agent: policy(observations[agent], agent) for agent in parallel_env.agents}
@@ -25,12 +26,12 @@ def main():
                 observations = new_observations
 
                 # RENDER
-                env.render(er_hat=algorithm.er_hat, alg_name=algorithm.name)
+                env.render(er_hat=algorithm.er_hat_list, alg_name=algorithm.name)
                 # env.render(er_hat=algorithm.search_map)
 
                 # METRICS
                 plotter.update_metrics_and_neptune({
-                    'er_loss': get_er_loss(er_real=env.field_list, er_hat=algorithm.er_hat),
+                    'er_loss': get_er_loss(er_real=env.field_list, er_hat=algorithm.er_hat_list),
                     'objective': get_objective(er_real=env.field_list, agents=env.agents_list),
                 })
 
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     CRED = 0.5
     targets = 1
     target_radius = 2
-    width = 10
+    width = 4
     # algorithms_list = [AlgDSA()]
     # algorithms_list = [AlgRand1()]
     algorithms_list = [AlgSimpleCover()]

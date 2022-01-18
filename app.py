@@ -15,7 +15,7 @@ def main():
 
             observations = env.reset()
             # algorithm.reset(env.agents_list, field_list=env.get_field())
-            algorithm.reset(env.agents_list, field_list=env.field_list, targets=env.poi, target_radius=env.poi_radius)
+            algorithm.reset(env.agents_list, field_list=env.field_list, targets=env.poi, target_radius=env.poi_radius, ratio=problem/(PROBLEMS - 10))
 
             for step in range(MAX_STEPS):
                 # actions_dict = {agent: policy(observations[agent], agent) for agent in parallel_env.agents}
@@ -26,7 +26,8 @@ def main():
                 observations = new_observations
 
                 # RENDER
-                env.render(er_hat=algorithm.er_hat_list, alg_name=algorithm.name)
+                env.render(er_hat=algorithm.reward_field_to_plot, alg_name=algorithm.name)
+                # env.render(alg_name=algorithm.name)
                 # env.render(er_hat=algorithm.search_map)
 
                 # METRICS
@@ -37,26 +38,27 @@ def main():
 
                 # PROGRESS
                 print(f'\r~[INFO] problem: {problem + 1}/{PROBLEMS}, alg:{i_alg + 1}/{len(algorithms_list)}, '
-                      f'step: {step + 1}/{MAX_STEPS} ', end='')
+                      f'step: {step + 1}/{MAX_STEPS}, size of rf_dict: {len(algorithm.rf_dict)}, alpha: {algorithm.alpha} ', end='')
 
 
 if __name__ == '__main__':
     # time.sleep(5)
-    PROBLEMS = 100
-    MAX_STEPS = 300
+    PROBLEMS = 110
+    MAX_STEPS = 20
     N_AGENTS = 2
     SR = 2
     MR = 2
     CRED = 0.5
     targets = 1
-    target_radius = 2
-    width = 4
+    target_radius = 3
+    width = 10
     # algorithms_list = [AlgDSA()]
     # algorithms_list = [AlgRand1()]
-    algorithms_list = [AlgSimpleCover()]
+    algorithms_list = [AlgSimpleCover(target_radius=target_radius)]
     env = MSASimulatorParallel(num_agents=N_AGENTS, to_render=True, width=width,
                                poi=targets, target_radius=target_radius,
                                agent_sr=SR, agent_mr=MR, agent_cred=CRED)
+    # env.seed()
     # plotter = Plotter(plot_neptune=True, tags=get_tags(algorithms_list), name='check')
     plotter = Plotter(plot_neptune=False, tags=get_tags(algorithms_list), name='check')
     main()

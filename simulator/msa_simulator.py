@@ -59,7 +59,8 @@ class MSASimulatorParallel:
             self.fig, (self.ax, self.ax2) = plt.subplots(nrows=1, ncols=2, figsize=(12, 6))
             # self.fig, (self.ax, self.ax2, self.ax3) = plt.subplots(nrows=1, ncols=3, figsize=(9, 3))
 
-    def seed(self):
+    @staticmethod
+    def seed():
         SEED = 123
         # torch.manual_seed(SEED)
         np.random.seed(SEED)
@@ -105,6 +106,7 @@ class MSASimulatorParallel:
 
         # CREATE POINTS OF INTEREST
         self.poi = random.sample(self.field_list, self.num_of_poi)
+        # self.poi = [self.field_list[25]]
         for target in self.poi:
             for pos in self.field_list:
                 dist = distance_nodes(target, pos)
@@ -230,7 +232,7 @@ class MSASimulatorParallel:
                     [pos_node.x for pos_node in er_hat],
                     [pos_node.y for pos_node in er_hat],
                     alpha=[pos_node.req for pos_node in er_hat],
-                    color='darkred', marker="o", s=5
+                    color='darkred', marker="p", s=100
                 )
 
             plt.pause(0.05)

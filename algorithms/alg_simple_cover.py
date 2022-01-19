@@ -32,7 +32,7 @@ class AlgSimpleCover(AlgMeta):
         self.er_hat_list = copy.deepcopy(field_list)
         self.er_hat_dict = {(pos.x, pos.y): pos for pos in self.er_hat_list}
         self.target_list = copy.deepcopy(kwargs['targets'])
-        self.ratio = kwargs['ratio']
+        self.ratio = min(0.95, kwargs['ratio'])
         self.alpha = self.ratio
         self.near_pos_dict = {}
         for target in self.target_list:
@@ -52,7 +52,10 @@ class AlgSimpleCover(AlgMeta):
             self.set_rel_dict(rel_dict, target, self.agents_list)
             rel_dict_key = self.get_rel_dict_key(rel_dict)
             if rel_dict_key not in self.rf_dict:
-                self.rf_dict[rel_dict_key] = sum(list(map(lambda curr_pos: curr_pos.cov_req, self.near_pos_dict[target.name])))
+                if 2 in rel_dict.values():
+                    self.rf_dict[rel_dict_key] = 0
+                else:
+                    self.rf_dict[rel_dict_key] = sum(list(map(lambda curr_pos: curr_pos.cov_req, self.near_pos_dict[target.name])))
 
         # CHOOSE THE NEXT ACTION ACCORDING TO THE MAP AND THE RF
         # we want to minimize the remained requirement or to maximize the covered requirement
@@ -65,14 +68,13 @@ class AlgSimpleCover(AlgMeta):
             reward_dict = {(pos.x, pos.y): pos for pos in reward_list}
             for target in self.target_list:
                 self.set_rel_dict(rel_dict, target, other_agents)
-                # rel_map_key = self.set_rel_dict(self.rel_map_dict[target.name], other_agents, return_tuple=False)
                 for near_pos in self.near_pos_dict[target.name]:
-                    self.update_agent_counter(rel_dict, target, near_pos, add=True)
+                    self.update_agent_counter(rel_dict, target, near_pos, add=True)  # ADD AGENT TO CHOSEN POS
                     rel_dict_key = self.get_rel_dict_key(rel_dict)
                     if rel_dict_key in self.rf_dict:
                         reward = self.rf_dict[rel_dict_key]
                         reward_dict[(near_pos.x, near_pos.y)].req += reward
-                    self.update_agent_counter(rel_dict, target, near_pos, add=False)
+                    self.update_agent_counter(rel_dict, target, near_pos, add=False)  # REMOVE AGENT FROM CHOSEN POS
 
             # - CHOOSE SUBSET OF MAXIMUM-COVERAGE POSITIONS
             max_reward = max([pos.req for pos in reward_list])

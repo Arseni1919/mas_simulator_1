@@ -1,9 +1,19 @@
 from GLOBALS import *
-from functions import distance_points
+from functions import distance_points, distance_nodes
+
+
+def get_collisions(agents):
+    count = 0
+    for agent1 in agents:
+        for agent2 in agents:
+            dist = distance_nodes(agent1, agent2)
+            if dist == 0:
+                count += 1
+    return count
 
 
 def get_er_loss(er_real, er_hat):
-    """loss = sum(abs(er - er_hat))"""
+    """loss = sum(abs(er - second_graph_dict))"""
     er_loss = 0
     er_hat_dict = {(pos.x, pos.y): pos for pos in er_hat}
     for er_pos in er_real:

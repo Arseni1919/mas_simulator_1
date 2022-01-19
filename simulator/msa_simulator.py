@@ -182,7 +182,7 @@ class MSASimulatorParallel:
     def random_demo(self, render=True, episodes=1):
         pass
 
-    def render(self, er_hat=None, alg_name='MAS Simulation'):
+    def render(self, second_graph_dict=None, alg_name='MAS Simulation'):
         if self.to_render:
             # self.fig.cla()
 
@@ -225,13 +225,13 @@ class MSASimulatorParallel:
                 circle_mr = plt.Circle((robot.x, robot.y), robot.mr, color='tab:purple', alpha=0.15)
                 self.ax.add_patch(circle_mr)
 
-            if er_hat:
+            if second_graph_dict:
                 self.ax2.clear()
-                self.ax2.set_title('er_hat')
+                self.ax2.set_title(second_graph_dict['name'])
                 self.ax2.scatter(
-                    [pos_node.x for pos_node in er_hat],
-                    [pos_node.y for pos_node in er_hat],
-                    alpha=[pos_node.req for pos_node in er_hat],
+                    [pos_node.x for pos_node in second_graph_dict['nodes']],
+                    [pos_node.y for pos_node in second_graph_dict['nodes']],
+                    alpha=[pos_node.req for pos_node in second_graph_dict['nodes']],
                     color='darkred', marker="p", s=100
                 )
 

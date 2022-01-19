@@ -57,7 +57,7 @@ class AlgDSA(AlgMeta):
         for action in agent.actions:
             next_x, next_y = env.get_next_pos(agent, action)
             xy_sum = 0
-            # for pos in self.er_hat:
+            # for pos in self.second_graph_dict:
             for pos in self.search_map:
                 if distance_points(next_x, next_y, pos.x, pos.y) <= agent.sr:
                     xy_sum += pos.req

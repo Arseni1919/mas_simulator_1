@@ -32,7 +32,7 @@ class AlgSimpleCover(AlgMeta):
         self.er_hat_list = copy.deepcopy(field_list)
         self.er_hat_dict = {(pos.x, pos.y): pos for pos in self.er_hat_list}
         self.target_list = copy.deepcopy(kwargs['targets'])
-        self.ratio = min(0.95, kwargs['ratio'])
+        self.ratio = min(0.9, kwargs['ratio'])
         self.alpha = self.ratio
         self.near_pos_dict = {}
         for target in self.target_list:

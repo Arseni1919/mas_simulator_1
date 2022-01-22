@@ -38,8 +38,8 @@ def main():
                 # METRICS
                 plotter.update_metrics_and_neptune({
                     # 'er_loss': get_er_loss(er_real=env.field_list, er_hat=algorithm.er_hat_list),
-                    'objective': get_objective(er_real=env.field_list, agents=env.agents_list),
-                    'collisions': get_collisions(agents=env.agents_list)
+                    # 'objective': get_objective(er_real=env.field_list, agents=env.agents_list),
+                    # 'collisions': get_collisions(agents=env.agents_list)
                 })
                 obj_list.append(get_objective(er_real=env.field_list, agents=env.agents_list))
                 collisions_list.append(get_collisions(agents=env.agents_list))
@@ -56,9 +56,9 @@ def main():
 
 if __name__ == '__main__':
     # time.sleep(5)
-    PROBLEMS = 110
+    PROBLEMS = 150
     MAX_STEPS = 20
-    N_AGENTS = 2
+    N_AGENTS = 4
     SR = 2
     MR = 2
     CRED = 0.5

@@ -18,6 +18,7 @@ class AlgSimpleCover(AlgMeta):
         self.reward_field_to_plot = None
         self.rf_dict = {}
         self.alpha = 0.9
+        self.max_alpha = 1
         self.ratio = None
 
     def create_rel_dict(self):
@@ -32,7 +33,7 @@ class AlgSimpleCover(AlgMeta):
         self.er_hat_list = copy.deepcopy(field_list)
         self.er_hat_dict = {(pos.x, pos.y): pos for pos in self.er_hat_list}
         self.target_list = copy.deepcopy(kwargs['targets'])
-        self.ratio = min(0.9, kwargs['ratio'])
+        self.ratio = min(self.max_alpha, kwargs['ratio'])
         self.alpha = self.ratio
         self.near_pos_dict = {}
         for target in self.target_list:

@@ -21,6 +21,12 @@ We investigate a new DCOP_MST model that incorporates elements of ML in distribu
 - ER Loss
 - DCOP_MST Objective
 
+### Screenshot
+
+<center>
+<img src="static/field.png">
+</center>
+
 ## Credits
 
 - [PettingZoo](https://www.pettingzoo.ml/#)

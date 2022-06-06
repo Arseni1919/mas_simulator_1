@@ -39,10 +39,13 @@ def get_objective(er_real, agents):
     return objective
 
 
-def get_tags(alg_list):
+def get_tags(alg_list, other_tags=None):
     tags = ['MAS_simulator']
     for alg in alg_list:
         tags.append(alg.name)
+    if other_tags:
+        for tag in other_tags:
+            tags.append(tag)
     return tags
 
 
